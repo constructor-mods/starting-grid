@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "ops": [
+    {
+      "op": "set",
+      "select": "options_system.options.multiplayer.options_folder_2.option_5",
+      "field": "game_modes",
+      "value": "online,gp"
+    },
+    {
+      "op": "set",
+      "select": "options_system.options.multiplayer.options_folder_2.option_5.additional_tags_0",
+      "field": "tags",
+      "value": "multiplayer_context,Unranked,UnrankedTemplate,UnrankedLAN,None"
+    },
+    {
+      "op": "set",
+      "select": "options_system.context.tag_folder_1.multiplayer_context_tag_6.restrictions_0.value_subset_0",
+      "field": "values",
+      "value": "starting_grid"
+    },
+    {
+      "op": "set",
+      "select": "options_system.options.multiplayer.options_folder_2.option_6",
+      "field": "game_modes",
+      "value": "online,gp"
+    }
+  ]
+}
