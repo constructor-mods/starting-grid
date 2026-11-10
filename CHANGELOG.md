@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+- A Grand Prix started with Grand Prix Saves' Create New now keeps its Starting Grid and custom order.
+- Backing out of Create New no longer loses the grid of the save you go back to.
+
 ## 0.1.1
 - Shows as tested on Steam in the launcher's Addon Browser, in the Utility category. Needs launcher 1.8.36 or newer.
 

@@ -9,8 +9,6 @@
 
 #include "menu_option.hpp"
 
-#include <windows.h>
-
 #include <atomic>
 #include <cstdint>
 #include <cstdio>
@@ -23,15 +21,6 @@
 
 namespace starting_grid {
 
-// The Grand Prix "Continue / Start new" screen.
-constexpr uintptr_t kContinueVtable = 0x5739fa0;
-constexpr int kPressSlot = 24;                 // a card pressed: continue a save, or start a new Grand Prix
-constexpr uintptr_t kPressFunction = 0x1bce150;
-constexpr int kFindModeSlot = 31;              // the Grand Prix mode's entity
-constexpr uintptr_t kCards = 0x328;
-constexpr uintptr_t kCardSize = 0x540;
-constexpr uintptr_t kCardSlotId = 0x8;         // the save shown on a card; the card's first byte is 0 when it has none
-
 // The mode's save slot list.
 constexpr uintptr_t kModeObject = 0xf08;
 constexpr uintptr_t kModeChildren = 0x238;
@@ -41,6 +30,9 @@ constexpr uintptr_t kSlotsBegin = 0x268;
 constexpr uintptr_t kSlotsEnd = 0x270;
 constexpr uintptr_t kCurrentSlot = 0x280;
 constexpr uintptr_t kSlotGuid = 0x8;           // a save's unique id
+constexpr uintptr_t kSlotMode = 0xa8;
+constexpr uintptr_t kSlotHasGame = 0xd2;
+constexpr uint8_t kNoMode = 255;               // a save that never held a game
 constexpr const char *kLineupsFile = "lineups.txt";
 
 struct SavedGrid {
@@ -51,6 +43,7 @@ struct SavedGrid {
 inline std::atomic<uintptr_t> g_save_slots{0};  // the Grand Prix save slot list, found when its screen is used
 inline std::atomic<bool> g_new_grand_prix{false}; // "Start new Grand Prix" pressed, its save not made yet
 inline std::atomic<uint64_t> g_save_before_new{0};
+inline std::set<uint64_t> g_saves_before_new;     // the saves there were when a new Grand Prix began
 
 inline bool is_save_slots(uintptr_t object)
 {
@@ -106,6 +99,22 @@ inline bool read_saves(uint64_t &current, std::set<uint64_t> &all)
         swofty::mem::read(slot + kSlotGuid, current);
     }
     return true;
+}
+
+// True when the save in use is an empty one, made for a new Grand Prix that has not been set up yet.
+inline bool current_save_is_empty()
+{
+    uintptr_t slots = g_save_slots;
+    uintptr_t slot = 0;
+    uint8_t mode = 0;
+    uint8_t has_game = 1;
+    if (!is_save_slots(slots) || !swofty::mem::read(slots + kCurrentSlot, slot) || !slot) {
+        return false;
+    }
+    if (!swofty::mem::read(slot + kSlotMode, mode) || !swofty::mem::read(slot + kSlotHasGame, has_game)) {
+        return false;
+    }
+    return mode == kNoMode && !has_game;
 }
 
 inline std::map<uint64_t, SavedGrid> load_grids()
@@ -242,56 +251,6 @@ inline void forget_missing(const std::set<uint64_t> &existing)
     if (changed) {
         store_grids(grids);
     }
-}
-
-using PressCard = uint64_t (*)(void *screen, uint64_t card, void *first, void *second);
-using FindMode = uintptr_t (*)(void *screen);
-inline PressCard g_original_press = nullptr;
-
-// A card on the Grand Prix screen pressed: finds the save list, and notes a new Grand Prix (it starts with no lineup).
-inline uint64_t press_card(void *screen, uint64_t card, void *first, void *second)
-{
-    uintptr_t vtable = 0;
-    uintptr_t find_mode = 0;
-    if (swofty::mem::read(reinterpret_cast<uintptr_t>(screen), vtable) &&
-        swofty::mem::read(vtable + 8 * uintptr_t(kFindModeSlot), find_mode) && find_mode) {
-        uintptr_t slots = find_save_slots(reinterpret_cast<FindMode>(find_mode)(screen));
-        if (slots) {
-            g_save_slots = slots;
-        }
-    }
-    uint8_t has_save = 0;
-    auto *card_data = static_cast<uint8_t *>(screen) + kCards + uintptr_t(card & 0xff) * kCardSize;
-    swofty::mem::read(reinterpret_cast<uintptr_t>(card_data), has_save);
-    if (has_save) {
-        g_new_grand_prix = false;
-    } else {
-        uint64_t current = 0;
-        std::set<uint64_t> all;
-        read_saves(current, all);
-        g_save_before_new = current;
-        g_new_grand_prix = true;
-    }
-    swofty::log("[starting-grid] Grand Prix screen: %s (save list %s)", has_save ? "continue" : "start new",
-                g_save_slots.load() ? "found" : "not found");
-    return g_original_press(screen, card, first, second);
-}
-
-inline void catch_grand_prix_screen()
-{
-    uintptr_t base = swofty::api->module_base();
-    auto *entry = reinterpret_cast<void **>(base + kContinueVtable + 8 * uintptr_t(kPressSlot));
-    if (*entry != reinterpret_cast<void *>(base + kPressFunction)) {
-        swofty::log("[starting-grid] Grand Prix screen: this game build is not supported");
-        return;
-    }
-    g_original_press = reinterpret_cast<PressCard>(*entry);
-    DWORD old_protect = 0;
-    if (!VirtualProtect(entry, sizeof(void *), PAGE_READWRITE, &old_protect)) {
-        return;
-    }
-    *entry = reinterpret_cast<void *>(&press_card);
-    VirtualProtect(entry, sizeof(void *), old_protect, &old_protect);
 }
 
 } // namespace starting_grid

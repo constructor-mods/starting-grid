@@ -18,9 +18,10 @@ Find it in **Grand Prix → Settings → Weekend Structure**, with **Qualifying 
 - Your Starting Grid choice and custom order stay with your Grand Prix save, even if you close the game.
 - Continue the save and they're back. Start a new Grand Prix and it starts fresh on Realistic.
 - Delete the save or finish it, and they go with it.
+- Works with **Grand Prix Saves**: every save keeps its own grid, Create New included.
 
 ### Needs
-- Swofty Launcher 1.8.10 or newer.
+- Swofty Launcher 1.8.36 or newer.
 - Offline sessions only, like all modded play.
 
 ### Credits

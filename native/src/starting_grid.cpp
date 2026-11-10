@@ -12,6 +12,7 @@
 #include <swofty/registry.hpp>
 
 #include "entrants.hpp"
+#include "grand_prix_screen.hpp"
 #include "grid_editor.hpp"
 #include "grid_order.hpp"
 #include "grid_table.hpp"
@@ -61,6 +62,33 @@ void follow_menu(StartingGrid choice)
 std::set<uint64_t> g_known_saves;
 bool g_have_saves = false;
 
+// The save in use changed. An empty one means a new Grand Prix (made without the screen's own card, for example by
+// another addon); going back to a save that was there before means that new Grand Prix was left.
+void follow_new_grand_prix(uint64_t save, const std::set<uint64_t> &saves)
+{
+    if (!g_new_grand_prix) {
+        g_saves_before_new.clear();
+    }
+    if (!save) {
+        return;
+    }
+    if (current_save_is_empty()) {
+        if (!g_new_grand_prix) {
+            g_saves_before_new = saves;
+            g_saves_before_new.erase(save);
+            g_save_before_new = save;
+            g_new_grand_prix = true;
+            log("[starting-grid] new Grand Prix in an empty save");
+        }
+        return;
+    }
+    if (g_new_grand_prix && g_saves_before_new.count(save)) {
+        g_new_grand_prix = false;
+        g_saves_before_new.clear();
+        log("[starting-grid] new Grand Prix left: back to an older save");
+    }
+}
+
 // Follows which Grand Prix save is in use, and forgets the grids of saves that are gone.
 void follow_saves()
 {
@@ -72,11 +100,12 @@ void follow_saves()
     if (save != g_save_id) {
         log("[starting-grid] Grand Prix save in use: %016llx (%zu saves)", static_cast<unsigned long long>(save),
             saves.size());
+        follow_new_grand_prix(save, saves);
     }
     g_save_id = save;
     // The game can write a save again under a new id: the save in use is gone and a new one took its place.
     uint64_t previous = g_lineup_save;
-    if (save && previous && save != previous && !saves.count(previous) && !has_grid(save)) {
+    if (!g_new_grand_prix && save && previous && save != previous && !saves.count(previous) && !has_grid(save)) {
         move_grid(previous, save);
         log("[starting-grid] Grand Prix save %016llx is now %016llx: its grid moves with it",
             static_cast<unsigned long long>(previous), static_cast<unsigned long long>(save));
