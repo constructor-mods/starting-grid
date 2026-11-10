@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "msyeett.starting-grid",
   "name": "Starting Grid",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "msyeett",
   "description": "Adds the online Starting Grid setting and Grid Editor to the offline Grand Prix: Realistic, Reversed, Random or your own Custom Grid when qualifying is off. Offline only.",
   "license": "MIT",
@@ -11,9 +11,13 @@
     "database",
     "native"
   ],
+  "category": "utility",
   "compat": {
     "game": "f1_25",
-    "launcher": ">=1.8.10"
+    "launcher": ">=1.8.36",
+    "platforms": [
+      "steam"
+    ]
   },
   "requires": [
     {
