@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.3
+- Cheaper memory checks with Swofty Launcher 1.9.30 or newer (fewer small hitches).
+
 ## 0.1.2
 - A Grand Prix started with Grand Prix Saves' Create New now keeps its Starting Grid and custom order.
 - Backing out of Create New no longer loses the grid of the save you go back to.
