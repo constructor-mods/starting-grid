@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.4
+- Works with the F1 25 game update of 16 November 2026 (before, the Starting Grid setting, Grid Editor and saved line-ups were gone).
+
 ## 0.1.3
 - Cheaper memory checks with Swofty Launcher 1.9.30 or newer (fewer small hitches).
 
