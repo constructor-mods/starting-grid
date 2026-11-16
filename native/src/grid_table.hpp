@@ -16,8 +16,8 @@ namespace starting_grid {
 
 using swofty::log;
 
-constexpr uintptr_t kPlacementVtableInitSlot = 0x57fa5d0; // where the system's setup function is listed
-constexpr uintptr_t kPlacementInit = 0x2f61640;          // that setup function on this game build
+constexpr uintptr_t kPlacementVtableInitSlot = 0x57fc710; // where the system's setup function is listed
+constexpr uintptr_t kPlacementInit = 0x2f63bd0;          // that setup function on this game build
 constexpr size_t kGridTable = 0x988;
 constexpr int kSlots = 32;
 constexpr uint8_t kEmpty = 0xff;
@@ -55,7 +55,7 @@ inline bool catch_placement_system()
     return true;
 }
 
-constexpr uintptr_t kPlacementVtable = 0x57fa5c0;
+constexpr uintptr_t kPlacementVtable = 0x57fc700;
 
 // The grid table, or nullptr before the game has set it up. The game keeps the same system from race to race, so it
 // is kept too, as long as it still is that system.

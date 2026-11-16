@@ -13,8 +13,8 @@ namespace mem = swofty::mem;
 // The Starting Grid choices, in the menu's order.
 enum class StartingGrid { unknown = -1, qualifying = 0, realistic = 1, reversed = 2, random = 3, custom = 4 };
 
-constexpr uintptr_t kOptionsStoreRva = 0x6079258;
-constexpr uintptr_t kFindOptionRva = 0x2b5dfd0;
+constexpr uintptr_t kOptionsStoreRva = 0x607b258;
+constexpr uintptr_t kFindOptionRva = 0x2b60560;
 constexpr uintptr_t kOptionMap = 0x270;
 constexpr uintptr_t kOptionEntries = 0x288;
 constexpr uintptr_t kOptionEntriesEnd = 0x290;

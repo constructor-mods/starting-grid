@@ -14,11 +14,11 @@
 
 namespace starting_grid {
 
-constexpr uintptr_t kContinueVtable = 0x5739fa0;
+constexpr uintptr_t kContinueVtable = 0x573c0d0;
 constexpr int kPressSlot = 24;                 // a card pressed: continue a save, or start a new Grand Prix
-constexpr uintptr_t kPressFunction = 0x1bce150;
+constexpr uintptr_t kPressFunction = 0x1bcfd50;
 constexpr int kFindModeSlot = 31;              // the Grand Prix mode's entity
-constexpr uintptr_t kFindModeFunction = 0x1bccc00;
+constexpr uintptr_t kFindModeFunction = 0x1bce800;
 constexpr uintptr_t kCards = 0x328;
 constexpr uintptr_t kCardSize = 0x540;
 

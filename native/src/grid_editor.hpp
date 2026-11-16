@@ -23,13 +23,13 @@
 
 namespace starting_grid {
 
-constexpr uintptr_t kEditorVtable = 0x5775780;
+constexpr uintptr_t kEditorVtable = 0x57778b0;
 constexpr int kOpenSlot = 19;
-constexpr uintptr_t kOpenFunction = 0x2218f20;
+constexpr uintptr_t kOpenFunction = 0x221ab20;
 constexpr int kIsBoundSlot = 4;
-constexpr uintptr_t kIsBoundFunction = 0x4321a70;
+constexpr uintptr_t kIsBoundFunction = 0x4324040;
 constexpr int kCommandSlot = 10;
-constexpr uintptr_t kCommandFunction = 0x221dd70;
+constexpr uintptr_t kCommandFunction = 0x221f970;
 
 using EditorOpen = uint64_t (*)(void *editor, void *first, void *second, void *third);
 using EditorCommand = uint64_t (*)(void *editor, void *command, void *second, void *third);
